@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Statements</title>
+<style>
+  :root { --bg: #fff; --fg: #1d2330; --muted: #5b6475; --line: #e3e6ec; --fail: #b42318; --blocked: #b42318; --warn: #9a6700; --ok: #067647; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #11151c; --fg: #e6e9ef; --muted: #9aa3b2; --line: #2a3140; --fail: #f97066; --blocked: #f97066; --warn: #f5c451; --ok: #47cd89; } }
+  body { font: 14px/1.5 system-ui, sans-serif; background: var(--bg); color: var(--fg); max-width: 1000px; margin: 0 auto; padding: 24px 16px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  .meta { color: var(--muted); margin-bottom: 16px; }
+  .wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .blocked { color: var(--blocked); font-weight: 600; } .complete { color: var(--ok); }
+  .fail { color: var(--fail); } .warn { color: var(--warn); }
+</style>
+</head>
+<body>
+<h1>Quarterly statements</h1>
+<div class="meta">{% if batch %}Batch {{ batch.id }} ({{ batch.label }}). Blocked statements failed the divergence gate and must not be lodged until the provider report and the transactions agree.{% else %}No finished batch yet. Run <code>tse run --all</code>.{% endif %}</div>
+<div class="wrap">
+<table>
+<thead><tr><th>Business</th><th>Quarter</th><th>Status</th><th>Net payable</th><th>Fail</th><th>Warn</th><th>Commentary</th></tr></thead>
+<tbody>
+{% for r in rows %}
+<tr><td>{{ r.tenant }}</td><td>{{ r.quarter }}</td><td class="{{ r.status }}">{{ r.status }}</td><td class="num">{{ r.net }}</td><td class="num {% if r.fail %}fail{% endif %}">{{ r.fail }}</td><td class="num {% if r.warn %}warn{% endif %}">{{ r.warn }}</td><td>{{ r.commentary }}</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</body>
+</html>

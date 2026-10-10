@@ -1,0 +1,18 @@
+# Tax configuration for a fictional jurisdiction. Synthetic rules for demonstration only;
+# this is not real tax law. Every run records the version that produced it.
+version: "2026.10.1"
+jurisdiction: Fictional sales-tax jurisdiction (synthetic)
+
+# Flat sales tax charged on standard-rated sales and claimable on standard-rated purchases.
+sales_tax_rate: "0.10"
+
+# Divergence gate: block the run when the provider's tax report differs from the
+# transaction-level calculation by more than this amount (currency units).
+divergence_tolerance: "1.00"
+strict_mode: true
+
+# A recorded tax amount may differ from net x rate by this much before it is flagged.
+rate_tolerance: "0.01"
+
+# Inform when net payable moves by more than this share against the prior quarter.
+swing_threshold: "0.50"

@@ -1,0 +1,29 @@
+# Postgres, the mock accounting provider and the statements page.
+# Then, on the host:  uv sync --extra postgres  and run tse with the two URLs in .env.example.
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: tse
+      POSTGRES_PASSWORD: tse
+      POSTGRES_DB: tse
+    ports: ["5433:5432"]  # 5433 on the host, so a local Postgres on 5432 does not clash
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tse"]
+      interval: 2s
+      retries: 20
+
+  provider:
+    build: .
+    command: ["tse", "provider", "--host", "0.0.0.0", "--port", "9000"]
+    volumes: ["./data:/app/data:ro"]
+    ports: ["9000:9000"]
+
+  web:
+    build: .
+    command: ["tse", "serve", "--host", "0.0.0.0", "--port", "8000"]
+    environment:
+      TSE_DATABASE_URL: postgresql+psycopg://tse:tse@db:5432/tse
+    depends_on:
+      db: {condition: service_healthy}
+    ports: ["8000:8000"]
